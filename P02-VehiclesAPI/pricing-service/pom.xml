@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.1.5.RELEASE</version>
+		<version>3.0.0</version>
 		<relativePath/> <!-- lookup parent from com.udacity.pricing.repository -->
 	</parent>
 	<groupId>com.udacity</groupId>
@@ -15,7 +15,10 @@
 	<description>Pricing Service</description>
 
 	<properties>
-		<java.version>11</java.version>
+		<java.version>17</java.version>
+		<!-- Dependencies required for registering the microservice in an eureka server.
+        Include <dependencies>, <dependencyManagement> and <repositories> elements -->
+		<spring-cloud.version>2022.0.0-RC2</spring-cloud.version>
 	</properties>
 
 	<dependencies>
@@ -42,7 +45,68 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+
+		<dependency>
+			<!-- Spring Data REST builds on top of Spring Data repositories, analyzes your application’s domain model
+            and exposes hypermedia-driven HTTP resources for aggregates contained in the model. -->
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-rest</artifactId>
+		</dependency>
+		<!-- Dependencies required for registering the microservice in an eureka server.
+        Include <properties>, <dependencyManagement> and <repositories> elements -->
+		<dependency>
+			<!-- Dependencies required for registering the microservice in an eureka server -->
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-config</artifactId>
+		</dependency>
+		<dependency>
+			<!-- Dependencies required for registering the microservice in an eureka server -->
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<scope>test</scope>
+		</dependency>
+
 	</dependencies>
+
+	<!-- Dependencies required for registering the microservice in an eureka server.
+        Include <properties>, <dependencies> and <repositories> elements -->
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-dependencies</artifactId>
+				<version>${spring-cloud.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
+	<!-- Dependencies required for registering the microservice in an eureka server.
+        Include <properties>, <dependencyManagement> and <dependencies> elements -->
+	<repositories>
+		<repository>
+			<id>netflix-candidates</id>
+			<name>Netflix Candidates</name>
+			<url>https://artifactory-oss.prod.netflix.net/artifactory/maven-oss-candidates</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+		<repository>
+			<id>spring-milestones</id>
+			<name>Spring Milestones</name>
+			<url>https://repo.spring.io/milestone</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+	</repositories>
 
 	<build>
 		<plugins>
