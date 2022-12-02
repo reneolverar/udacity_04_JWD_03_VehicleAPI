@@ -15,6 +15,8 @@
     <description>eureka</description>
     <properties>
         <java.version>17</java.version>
+        <!-- Dependencies required for setting up an eureka server.
+        Include <dependency>, <dependencyManagement> and <repositories> elements -->
         <spring-cloud.version>2022.0.0-RC2</spring-cloud.version>
     </properties>
     <dependencies>
@@ -22,10 +24,8 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-config</artifactId>
-        </dependency>
+        <!-- Dependencies required for setting up an eureka server.
+        Include <property>, <dependencyManagement> and <repositories> elements -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-netflix-eureka-server</artifactId>
@@ -36,6 +36,9 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
+    <!-- Dependencies required for setting up an eureka server.
+        Include <property>, <dependency> and <repositories> elements -->
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -48,14 +51,8 @@
         </dependencies>
     </dependencyManagement>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-            </plugin>
-        </plugins>
-    </build>
+    <!-- Dependencies required for setting up an eureka server.
+        Include <property>, <dependency> and <dependencyManagement> elements -->
     <repositories>
         <repository>
             <id>netflix-candidates</id>
@@ -74,5 +71,14 @@
             </snapshots>
         </repository>
     </repositories>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>

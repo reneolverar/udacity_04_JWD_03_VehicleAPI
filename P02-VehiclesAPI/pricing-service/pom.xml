@@ -47,23 +47,23 @@
 		</dependency>
 
 		<dependency>
-			<!-- Spring Data REST builds on top of Spring Data repositories, analyzes your application’s domain model
+		<!-- Spring Data REST builds on top of Spring Data repositories, analyzes your application’s domain model
             and exposes hypermedia-driven HTTP resources for aggregates contained in the model. -->
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-data-rest</artifactId>
-		</dependency>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-starter-data-rest</artifactId>
+			</dependency>
 		<!-- Dependencies required for registering the microservice in an eureka server.
         Include <properties>, <dependencyManagement> and <repositories> elements -->
-		<dependency>
-			<!-- Dependencies required for registering the microservice in an eureka server -->
-			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-starter-config</artifactId>
-		</dependency>
-		<dependency>
-			<!-- Dependencies required for registering the microservice in an eureka server -->
-			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
-		</dependency>
+			<dependency>
+				<!-- Dependencies required for registering the microservice in an eureka server -->
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-starter-config</artifactId>
+			</dependency>
+			<dependency>
+				<!-- Dependencies required for registering the microservice in an eureka server -->
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+			</dependency>
 
 		<dependency>
 			<groupId>junit</groupId>
