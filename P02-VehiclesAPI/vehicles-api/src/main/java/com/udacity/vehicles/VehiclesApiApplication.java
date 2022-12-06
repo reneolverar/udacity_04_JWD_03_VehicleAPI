@@ -2,6 +2,7 @@ package com.udacity.vehicles;
 
 import com.udacity.vehicles.domain.manufacturer.Manufacturer;
 import com.udacity.vehicles.domain.manufacturer.ManufacturerRepository;
+import com.udacity.vehicles.service.CarService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
@@ -30,13 +31,15 @@ public class VehiclesApiApplication {
      * @return the car manufacturers to add to the related repository
      */
     @Bean
-    CommandLineRunner initDatabase(ManufacturerRepository repository) {
+    CommandLineRunner initDatabase(ManufacturerRepository repository, CarService carService) {
         return args -> {
             repository.save(new Manufacturer(100, "Audi"));
             repository.save(new Manufacturer(101, "Chevrolet"));
             repository.save(new Manufacturer(102, "Ford"));
             repository.save(new Manufacturer(103, "BMW"));
             repository.save(new Manufacturer(104, "Dodge"));
+
+            carService.save(carService.createTestCar());
         };
     }
 

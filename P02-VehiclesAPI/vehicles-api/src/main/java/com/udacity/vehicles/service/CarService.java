@@ -1,8 +1,16 @@
 package com.udacity.vehicles.service;
 
+import com.udacity.vehicles.client.maps.MapsClient;
+import com.udacity.vehicles.client.prices.PriceClient;
+import com.udacity.vehicles.domain.Condition;
+import com.udacity.vehicles.domain.Location;
 import com.udacity.vehicles.domain.car.Car;
 import com.udacity.vehicles.domain.car.CarRepository;
+
 import java.util.List;
+
+import com.udacity.vehicles.domain.car.Details;
+import com.udacity.vehicles.domain.manufacturer.Manufacturer;
 import org.springframework.stereotype.Service;
 
 /**
@@ -14,13 +22,17 @@ import org.springframework.stereotype.Service;
 public class CarService {
 
     private final CarRepository repository;
+    private final PriceClient priceClient;
+    private final MapsClient mapsClient;
 
-    public CarService(CarRepository repository) {
+    public CarService(CarRepository repository, PriceClient priceClient, MapsClient mapsClient) {
         /**
          * TODO: Add the Maps and Pricing Web Clients you create
          *   in `VehiclesApiApplication` as arguments and set them here.
          */
         this.repository = repository;
+        this.priceClient = priceClient;
+        this.mapsClient = mapsClient;
     }
 
     /**
@@ -42,8 +54,12 @@ public class CarService {
          *   If it does not exist, throw a CarNotFoundException
          *   Remove the below code as part of your implementation.
          */
-        Car car = new Car();
-
+        Car car = repository.findById(id)
+                .orElseThrow(() -> new CarNotFoundException(
+                        "Car with id " + id + " does not exist."
+                ));
+//        Optional<Car> optionalCar = repository.findById(id);
+//        Car car = optionalCar.orElseThrow(CarNotFoundException::new);
         /**
          * TODO: Use the Pricing Web client you create in `VehiclesApiApplication`
          *   to get the price based on the `id` input'
@@ -51,8 +67,7 @@ public class CarService {
          * Note: The car class file uses @transient, meaning you will need to call
          *   the pricing service each time to get the price.
          */
-
-
+        car.setPrice(priceClient.getPrice(id));
         /**
          * TODO: Use the Maps Web client you create in `VehiclesApiApplication`
          *   to get the address for the vehicle. You should access the location
@@ -61,6 +76,7 @@ public class CarService {
          * Note: The Location class file also uses @transient for the address,
          * meaning the Maps service needs to be called each time for the address.
          */
+        car.setLocation(mapsClient.getAddress(car.getLocation()));
 
 
         return car;
@@ -80,7 +96,6 @@ public class CarService {
                         return repository.save(carToBeUpdated);
                     }).orElseThrow(CarNotFoundException::new);
         }
-
         return repository.save(car);
     }
 
@@ -93,12 +108,33 @@ public class CarService {
          * TODO: Find the car by ID from the `repository` if it exists.
          *   If it does not exist, throw a CarNotFoundException
          */
-
-
+        Car car = repository.findById(id)
+                .orElseThrow(() -> new CarNotFoundException(
+                        "Car with id " + id + " does not exist."
+                ));
         /**
          * TODO: Delete the car from the repository.
          */
+        repository.delete(car);
+    }
 
-
+    public Car createTestCar() {
+        Car car = new Car();
+        car.setLocation(new Location(40.730610, -73.935242));
+        Details details = new Details();
+        Manufacturer manufacturer = new Manufacturer(101, "Chevrolet");
+        details.setManufacturer(manufacturer);
+        details.setModel("Impala");
+        details.setMileage(32280);
+        details.setExternalColor("white");
+        details.setBody("sedan");
+        details.setEngine("3.6L V6");
+        details.setFuelType("Gasoline");
+        details.setModelYear(2018);
+        details.setProductionYear(2018);
+        details.setNumberOfDoors(4);
+        car.setDetails(details);
+        car.setCondition(Condition.USED);
+        return car;
     }
 }
