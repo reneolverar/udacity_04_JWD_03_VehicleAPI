@@ -30,6 +30,10 @@ public class PricingController {
             throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND, "Price Not Found", ex);
         }
+    }
 
+    @GetMapping("/test")
+    public String test() {
+        return "Pricing Service API";
     }
 }
