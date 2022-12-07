@@ -1,26 +1,31 @@
 package com.udacity.vehicles.api;
 
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.udacity.vehicles.client.maps.MapsClient;
 import com.udacity.vehicles.client.prices.PriceClient;
 import com.udacity.vehicles.domain.Condition;
 import com.udacity.vehicles.domain.Location;
 import com.udacity.vehicles.domain.car.Car;
+import com.udacity.vehicles.domain.car.CarDto;
 import com.udacity.vehicles.domain.car.Details;
 import com.udacity.vehicles.domain.manufacturer.Manufacturer;
 import com.udacity.vehicles.service.CarService;
 import java.net.URI;
 import java.util.Collections;
+
+import org.json.JSONObject;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -33,6 +38,8 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 /**
  * Implements testing of the CarController class.
@@ -77,12 +84,42 @@ public class CarControllerTest {
     @Test
     public void createCar() throws Exception {
         Car car = getCar();
-        mvc.perform(
+        MvcResult result = mvc.perform(
                 post(new URI("/cars"))
                         .content(json.write(car).getJson())
-                        .contentType(MediaType.APPLICATION_JSON_UTF8)
-                        .accept(MediaType.APPLICATION_JSON_UTF8))
-                .andExpect(status().isCreated());
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpectAll(
+                        status().isCreated(),
+                        jsonPath("$._links", is(notNullValue())))
+                .andReturn();
+        CarDto returnedCar = new ObjectMapper().readValue(result.getResponse().getContentAsString(), CarDto.class);
+        Assert.assertEquals(car.getCreatedAt(), returnedCar.getCreatedAt());
+        verify(carService, times(1)).save(any(Car.class));
+    }
+
+    /**
+     * Tests for successful update of a car in the system
+     * @throws Exception when car update fails in the system
+     */
+    @Test
+    public void updateCar() throws Exception {
+        Car car = getCar();
+        car.setId(1L);
+        car.getDetails().setExternalColor("red");
+        given(carService.save(any())).willReturn(car);
+        MvcResult result = mvc.perform(
+                put(new URI("/cars/1"))
+                        .content(json.write(car).getJson())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andReturn();
+        CarDto returnedCar = new ObjectMapper().readValue(result.getResponse().getContentAsString(), CarDto.class);
+        Assert.assertEquals(car.getDetails().getExternalColor(), returnedCar.getDetails().getExternalColor());
+        verify(carService, times(1)).save(any(Car.class));
     }
 
     /**
@@ -96,7 +133,22 @@ public class CarControllerTest {
          *   the whole list of vehicles. This should utilize the car from `getCar()`
          *   below (the vehicle will be the first in the list).
          */
-
+        Car car = getCar();
+        car.setId(1L);
+        MvcResult result = mvc.perform(
+                get(new URI("/cars")))
+                .andDo(print())
+                .andExpectAll(
+                        status().isOk(),
+                        jsonPath("$._links", is(notNullValue())),
+                        MockMvcResultMatchers.jsonPath("$._embedded.cars[0].id").value(car.getId()),
+                        MockMvcResultMatchers.jsonPath("$._embedded.cars[0].details.body", is(car.getDetails().getBody())))
+                .andReturn();
+//        Same as using MockMvcResultMatchers.jsonPath("$._embedded.cars[0].id").value(car.getId()),
+//        String jsonCar1 = new JSONObject(result.getResponse().getContentAsString()).getJSONObject("_embedded").getJSONArray("carList").get(0).toString();
+//        Car returnedCar = new ObjectMapper().readValue(jsonCar1, Car.class);
+//        Assert.assertEquals(car.getId(), returnedCar.getId());
+        verify(carService, times(1)).list();
     }
 
     /**
@@ -109,6 +161,18 @@ public class CarControllerTest {
          * TODO: Add a test to check that the `get` method works by calling
          *   a vehicle by ID. This should utilize the car from `getCar()` below.
          */
+        Car car = getCar();
+        car.setId(1L);
+        MvcResult result = mvc.perform(
+                get(new URI("/cars/1")))
+                .andDo(print())
+                .andExpectAll(
+                        status().isOk(),
+                        jsonPath("$._links", is(notNullValue())),
+                        MockMvcResultMatchers.jsonPath("$.id").value(car.getId()),
+                        MockMvcResultMatchers.jsonPath("$.details.body").value(car.getDetails().getBody()))
+                .andReturn();
+        verify(carService, times(1)).findById(any(Long.class));
     }
 
     /**
@@ -118,10 +182,18 @@ public class CarControllerTest {
     @Test
     public void deleteCar() throws Exception {
         /**
-         * TODO: Add a test to check whether a vehicle is appropriately deleted
+         * DONE: Add a test to check whether a vehicle is appropriately deleted
          *   when the `delete` method is called from the Car Controller. This
          *   should utilize the car from `getCar()` below.
          */
+        Car car = getCar();
+        car.setId(1L);
+        MvcResult result = mvc.perform(
+                delete(new URI("/cars/1")))
+                .andDo(print())
+                .andExpect(status().isNoContent())
+                .andReturn();
+        verify(carService, times(1)).delete(any(Long.class));
     }
 
     /**

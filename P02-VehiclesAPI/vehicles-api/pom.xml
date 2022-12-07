@@ -116,6 +116,10 @@
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
         </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
     <!-- Dependencies required for registering the microservice in an eureka server.
         Include <properties>, <dependencies> and <repositories> elements -->
     <dependencyManagement>

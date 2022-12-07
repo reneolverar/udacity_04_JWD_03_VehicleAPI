@@ -7,6 +7,7 @@ import com.udacity.vehicles.domain.Location;
 import com.udacity.vehicles.domain.car.Car;
 import com.udacity.vehicles.domain.car.CarRepository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import com.udacity.vehicles.domain.car.Details;
@@ -27,7 +28,7 @@ public class CarService {
 
     public CarService(CarRepository repository, PriceClient priceClient, MapsClient mapsClient) {
         /**
-         * TODO: Add the Maps and Pricing Web Clients you create
+         * DONE: Add the Maps and Pricing Web Clients you create
          *   in `VehiclesApiApplication` as arguments and set them here.
          */
         this.repository = repository;
@@ -50,7 +51,7 @@ public class CarService {
      */
     public Car findById(Long id) {
         /**
-         * TODO: Find the car by ID from the `repository` if it exists.
+         * DONE: Find the car by ID from the `repository` if it exists.
          *   If it does not exist, throw a CarNotFoundException
          *   Remove the below code as part of your implementation.
          */
@@ -93,6 +94,7 @@ public class CarService {
                     .map(carToBeUpdated -> {
                         carToBeUpdated.setDetails(car.getDetails());
                         carToBeUpdated.setLocation(car.getLocation());
+                        carToBeUpdated.setCondition(car.getCondition());
                         return repository.save(carToBeUpdated);
                     }).orElseThrow(CarNotFoundException::new);
         }
@@ -105,7 +107,7 @@ public class CarService {
      */
     public void delete(Long id) {
         /**
-         * TODO: Find the car by ID from the `repository` if it exists.
+         * DONE: Find the car by ID from the `repository` if it exists.
          *   If it does not exist, throw a CarNotFoundException
          */
         Car car = repository.findById(id)
@@ -113,7 +115,7 @@ public class CarService {
                         "Car with id " + id + " does not exist."
                 ));
         /**
-         * TODO: Delete the car from the repository.
+         * DONE: Delete the car from the repository.
          */
         repository.delete(car);
     }
