@@ -1,0 +1,9 @@
+INSERT INTO price (vehicle_id, price, currency) VALUES (1, 100000, 'Euro');
+INSERT INTO price (vehicle_id, price, currency) VALUES (2, 200000, 'Euro');
+INSERT INTO price (vehicle_id, price, currency) VALUES (3, 300000, 'Euro');
+INSERT INTO price (vehicle_id, price, currency) VALUES (4, 400000, 'Euro');
+INSERT INTO price (vehicle_id, price, currency) VALUES (5, 500000, 'Euro');
+INSERT INTO price (vehicle_id, price, currency) VALUES (6, 600000, 'Euro');
+INSERT INTO price (vehicle_id, price, currency) VALUES (7, 700000, 'Euro');
+INSERT INTO price (vehicle_id, price, currency) VALUES (8, 800000, 'Euro');
+INSERT INTO price (vehicle_id, price, currency) VALUES (9, 900000, 'Euro');
